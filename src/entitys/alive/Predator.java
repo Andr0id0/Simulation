@@ -1,6 +1,7 @@
 package entitys.alive;
 
 public class Predator extends Creature {
+    public final String VIEW = "2";
 
     int damage;
 
@@ -11,5 +12,15 @@ public class Predator extends Creature {
 
     public void attack() {
 
+    }
+
+    public Predator(int speed, int health, int damage) {
+        this.speed = speed;
+        this.health = health;
+        this.damage = damage;
+    }
+
+    public String getVIEW() {
+        return VIEW;
     }
 }
