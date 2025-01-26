@@ -1,25 +1,41 @@
-import actions.*;
-import entitys.Entity;
-
-import java.util.HashMap;
+import java.util.*;
 
 public class Simulation {
 
-
-    HashMap<int[], Entity> gameMap;
+    Map map;
 
     int moveCounter;
 
+    MapConsoleRenderer mapConsoleRenderer;
 
-    Actions action = new Actions();
-    public void nextTurn() {
-        action.createClearMap(action.mapSize());
-        System.out.println(action.getMap().toString());
-        action.putAllEntity();
-        System.out.println(action.getMap().toString());
-        action.printMap();
+    public Simulation(Map map, MapConsoleRenderer mapConsoleRenderer, int moveCounter) {
+        this.map = map;
+        this.mapConsoleRenderer = mapConsoleRenderer;
+        this.moveCounter = moveCounter;
+    }
+
+    public static void main(String[] args) {
+        Map map = new Map(new HashMap<>());
+        Simulation simulation = new Simulation(map, new MapConsoleRenderer(map), 3);
+        simulation.map.initEntityInMap();
+        simulation.mapConsoleRenderer.render();
+        System.out.println(" ");
+        System.out.println(" ");
+        System.out.println(" ");
+
+        for (Coordinates coordinates : map.map.keySet()) {
+            if (map.getEntity(coordinates).getClass().getSimpleName().equals("Herbivore")) {
+                Creature creature = (Creature) map.getEntity(coordinates);
+                creature.makeMove(coordinates, map);
+                simulation.mapConsoleRenderer.render();
+                break;
+            }
+        }
+
 
 
     }
 
 }
+
+
