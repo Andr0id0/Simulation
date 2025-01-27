@@ -14,7 +14,7 @@ public class Herbivore extends Creature {
 
     public void eat(Coordinates coordinates, Map map) {
         map.deleteEntity(coordinates);
-        System.out.println("Кушаем растение по координатам + x:" + coordinates.getX() + " y:" + coordinates.getY());
+        System.out.println("Кушаем растение по координатам + x:" + coordinates.x() + " y:" + coordinates.y());
     }
 
     public Herbivore(int speed, int health) {

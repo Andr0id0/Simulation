@@ -5,10 +5,13 @@ public abstract class Creature extends Entity {
     int speed;
     int health;
 
+    ///  цель поиска для creature
     public String target;
 
+    /// метод, выполняющий в дочернем классе, действие creature
     abstract void performAction(Coordinates coordinates, Map map);
 
+    /// метод, определяющий в дочернем классе, является ли клетка target или void
     abstract boolean isTargetOrVoid(Coordinates coordinates, Map map);
 
     public void makeMove(Coordinates from, Map map) {
@@ -16,23 +19,18 @@ public abstract class Creature extends Entity {
         int speed = creature.getSpeed();
         Deque<Coordinates> coordinates = bfsToTarget(from, map);
 
-        /// Если путь пустой, не делаем движения
+        /// Если путь пустой не движемся
         if (coordinates.isEmpty()) {
             return;
         }
-        /// Проверка, что creature уже рядом с target
-        Coordinates targetCoordinates = isTargetNear(from, map);
-        if (targetCoordinates != null) {
-            /// тогда выполняем действие creature
-            performAction(coordinates.pollLast(), map);
 
-            return;
-        }
-
+        /// если creature может дойти до target за один ход или creature уже возле target
         if (coordinates.size() - 1 <= speed) {
-            ///  перемещаем creature на ближайшую позицию перед target
-            coordinates.pollLast();  /// убирая при этом из очереди координаты target
+             /// выполняем performAction убирая при этом из очереди координаты target
+            performAction(coordinates.pollLast(), map);
+            ///  перемещаем creature на ближайшую в пути позицию перед target
             map.moveEntity(from, coordinates.pollLast(), map.getEntity(from));
+
         } else {
             ///  перемещаем creature ближе к target на максимальное количество шагов
             for (int step = 0; step < speed; step++) {
@@ -53,11 +51,6 @@ public abstract class Creature extends Entity {
         Set<Coordinates> visited = new HashSet<>();
         visited.add(start);
 
-        // to do --> replace form method coordinatesNear(Coordinates coordinates, Map map)
-        ///Соседние направления для перемещения (вверх, вниз, влево, вправо)
-        int[] dx = {1, -1, 0, 0};
-        int[] dy = {0, 0, 1, -1};
-
         while (!queue.isEmpty()) {
             /// Извлекаем путь из очереди
             Deque<Coordinates> path = queue.poll();
@@ -70,10 +63,7 @@ public abstract class Creature extends Entity {
             }
 
             /// Проходим по соседям текущего узла
-            for (int i = 0; i < 4; i++) {
-                int newX = current.getX() + dx[i];
-                int newY = current.getY() + dy[i];
-                Coordinates neighbor = new Coordinates(newX, newY);
+            for (Coordinates neighbor : cellsToCheck(current)) {
 
                 /// Проверяем что сосед в пределах карты, не был посещен, и является target или пустой клеткой
                 if (map.isCordsInMapArea(neighbor) && !visited.contains(neighbor) && isTargetOrVoid(neighbor, map)) {
@@ -92,36 +82,13 @@ public abstract class Creature extends Entity {
         return new LinkedList<>();
     }
 
-
-    private Coordinates isTargetNear(Coordinates coordinates, Map map) {
-        for (Coordinates c : cellsToCheck(coordinates)) {
-            if (!map.isSquareEmpty(c) && map.isCordsInMapArea(coordinates)) {
-                Entity entity = map.getEntity(c);
-                if (entity.getClass().getSimpleName().equals(target)) {
-                    return c;
-                }
-            }
-        }
-        return null;
-    }
-
-    private List<Coordinates> coordinatesNear(Coordinates coordinates, Map map) {
-        List<Coordinates> coordinatesToCheck = new ArrayList<>();
-        for (Coordinates c : cellsToCheck(coordinates)) {
-            if (map.isCordsInMapArea(c)) {
-                coordinatesToCheck.add(c);
-            }
-        }
-        return coordinatesToCheck;
-    }
-
-
+    /// возвращает все соседние клетки
     private Set<Coordinates> cellsToCheck(Coordinates coordinates) {
         return Set.of(
-                new Coordinates(coordinates.getX() - 1, coordinates.getY()),
-                new Coordinates(coordinates.getX() + 1, coordinates.getY()),
-                new Coordinates(coordinates.getX(), coordinates.getY() - 1),
-                new Coordinates(coordinates.getX(), coordinates.getY() + 1)
+                new Coordinates(coordinates.x() - 1, coordinates.y()),
+                new Coordinates(coordinates.x() + 1, coordinates.y()),
+                new Coordinates(coordinates.x(), coordinates.y() - 1),
+                new Coordinates(coordinates.x(), coordinates.y() + 1)
         );
     }
 
@@ -137,30 +104,3 @@ public abstract class Creature extends Entity {
         this.health = health;
     }
 }
-
-//public Deque<Coordinates> findPathToTarget(Coordinates coordinates, Map map)  {
-//    Deque<Coordinates> path = new ArrayDeque<>();
-//
-//    Deque<Coordinates> toVisit = new ArrayDeque<>
-//            (coordinatesNear(coordinates, map));
-//    Set<Coordinates> visited = new HashSet<>();
-//    visited.add(coordinates);
-//    while (!toVisit.isEmpty()) {
-//        Coordinates visiting = toVisit.pollFirst();
-//        path.add(visiting);
-//
-//        Coordinates targetCoordinates = isTargetNear(visiting, map);
-//        if (targetCoordinates != null) {
-//            path.add(visiting);
-//            break;
-//        }
-//
-//        for (Coordinates c : coordinatesNear(visiting, map)) {
-//            if (!visited.contains(c)) {
-//                visited.add(c);
-//                toVisit.add(c);
-//            }
-//        }
-//    }
-//    return path;
-//}

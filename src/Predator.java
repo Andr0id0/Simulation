@@ -19,12 +19,12 @@ public class Predator extends Creature {
         int healthAfterAttack = creature.getHealth() - damage;
         if (healthAfterAttack <= 0) {
             map.deleteEntity(coordinates);
-            System.out.println("Убили травоядного на координатах x:" + coordinates.getX() + " y:" + coordinates.getY());
+            System.out.println("Убили травоядного на координатах x:" + coordinates.x() + " y:" + coordinates.y());
             return;
         }
         creature.setHealth(healthAfterAttack);
         map.putEntity(coordinates, creature);
-        System.out.println("Ранили травоядного на координатах x:" + coordinates.getX() + " y:" + coordinates.getY());
+        System.out.println("Ранили травоядного на координатах x:" + coordinates.x() + " y:" + coordinates.y());
 
     }
 

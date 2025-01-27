@@ -17,8 +17,8 @@ public class MapConsoleRenderer {
     }
 
     public void render() {
-        int height = map.getHeight();
-        int length = map.getLength();
+        int height = map.getSizeY();
+        int length = map.getSizeY();
 
         for (int x = 0; x < height; x++) {
             StringBuilder line = new StringBuilder();
@@ -34,23 +34,18 @@ public class MapConsoleRenderer {
             line.append(ANSI_RESET);
             System.out.println(line);
         }
+        System.out.println(" ");
     }
 
     private String renderEntity(Coordinates coordinates) {
         Entity entity = map.getEntity(coordinates);
-        switch (entity.getClass().getSimpleName()) {
-            case "Tree":
-                return SYMBOL_TREE;
-            case "Rock":
-                return SYMBOL_ROCK;
-            case "Grass":
-                return SYMBOL_GRASS;
-            case "Predator":
-                return SYMBOL_PREDATOR;
-            case "Herbivore":
-                return SYMBOL_HERBIVORE;
-            default:
-                return SYMBOL_EMPTY;
-        }
+        return switch (entity.getClass().getSimpleName()) {
+            case "Tree" -> SYMBOL_TREE;
+            case "Rock" -> SYMBOL_ROCK;
+            case "Grass" -> SYMBOL_GRASS;
+            case "Predator" -> SYMBOL_PREDATOR;
+            case "Herbivore" -> SYMBOL_HERBIVORE;
+            default -> SYMBOL_EMPTY;
+        };
     }
 }
