@@ -1,9 +1,15 @@
-public class Simulation {
+import Actions.*;
+import Utils.Map;
 
+import java.util.concurrent.TimeUnit;
+
+
+public class Simulation {
 
     Map map;
     int moveCounter;
-    /// to do fix architecture
+    boolean didEntityMove;
+
     InitMapAction initMapAction = new InitMapAction();
     InitEntityAction initEntityAction = new InitEntityAction();
     MapConsoleRenderAction mapConsoleRenderAction = new MapConsoleRenderAction();
@@ -11,43 +17,60 @@ public class Simulation {
     AddGrassAction addGrassAction = new AddGrassAction();
 
 
+    Action[] initActions = new Action[]{new InitMapAction(), new InitEntityAction(), new MapConsoleRenderAction()};
 
-    Action<?>[] initActions = new Action[]{new InitMapAction(), new InitEntityAction(), new MapConsoleRenderAction()};
-
-    Action<?>[] turnActions = new Action[]{new MoveEntityAction(), new MapConsoleRenderAction()};
+    Action[] turnActions = new Action[]{new MoveEntityAction(), new MapConsoleRenderAction()};
 
 
     public void initSimulation() {
-        map = initMapAction.doAction();
-        initEntityAction.doAction(map);
-        mapConsoleRenderAction.doAction(map);
         System.out.println("Инициализируем симуляцию ...");
+        map = initMapAction.init();
+        initEntityAction.initEntity(map);
+        mapConsoleRenderAction.render(map);
     }
 
     public void nextTurn() {
-//        addGrassAction.addGrassOnMap(map); to fix
         System.out.println("Совершаем ход");
-        moveEntityAction.doAction(map);
-        mapConsoleRenderAction.doAction(map);
+        addGrassAction.addGrass(map);
+        didEntityMove = moveEntityAction.moveEntity(map);
+        mapConsoleRenderAction.render(map);
     }
 
-    public void startSimulation(int moveCounter) {
+    public void startSimulation() {
+        System.out.println("Начинаем симуляцию");
         while (moveCounter > 0) {
             nextTurn();
+            if (!didEntityMove) {
+                System.out.println("Существам больше некуда двигаться");
+                break;
+            }
             moveCounter--;
+            try {
+                Thread.sleep(1300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
+    public void startInfinitySimulation() {
+        while (true) {
+            nextTurn();
+            if (!didEntityMove) {
+                System.out.println("Существам больше некуда двигаться");
+                break;
+            }
+            try {
+                Thread.sleep(1300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
 
+    }
 
-    public static void main(String[] args) {
-
-    Simulation simulation = new Simulation();
-    simulation.initSimulation();
-    simulation.nextTurn();
-    simulation.startSimulation(5);
-
-
+    public Simulation(int moveCounter) {
+        this.moveCounter = moveCounter;
     }
 
 }

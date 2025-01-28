@@ -1,3 +1,8 @@
+package Utils;
+
+import Entitys.Entity;
+
+
 public class MapConsoleRenderer {
 
     private static final String SYMBOL_TREE = "\uD83C\uDF3E";
@@ -9,7 +14,6 @@ public class MapConsoleRenderer {
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String SYMBOL_EMPTY = "🟩";
 
-
     private final Map map;
 
     public MapConsoleRenderer(Map map) {
@@ -17,7 +21,7 @@ public class MapConsoleRenderer {
     }
 
     public void render() {
-        int height = map.getSizeY();
+        int height = map.getSizeX();
         int length = map.getSizeY();
 
         for (int x = 0; x < height; x++) {
@@ -48,4 +52,5 @@ public class MapConsoleRenderer {
             default -> SYMBOL_EMPTY;
         };
     }
+
 }

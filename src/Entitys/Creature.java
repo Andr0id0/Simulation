@@ -1,4 +1,9 @@
+package Entitys;
+
+import Utils.Coordinates;
+import Utils.Map;
 import java.util.*;
+
 
 public abstract class Creature extends Entity {
 
@@ -10,26 +15,32 @@ public abstract class Creature extends Entity {
 
     /// метод, выполняющий в дочернем классе, действие creature
     abstract void performAction(Coordinates coordinates, Map map);
+    ///  метод который будет переопределен только у Herbivore           это нормальная практика так делать????
+    abstract void performActionTwo(Coordinates coordinates, Map map);
 
     /// метод, определяющий в дочернем классе, является ли клетка target или void
     abstract boolean isTargetOrVoid(Coordinates coordinates, Map map);
 
-    public void makeMove(Coordinates from, Map map) {
+    public boolean makeMove(Coordinates from, Map map) {
         Creature creature = (Creature) map.getEntity(from);
         int speed = creature.getSpeed();
         Deque<Coordinates> coordinates = bfsToTarget(from, map);
 
         /// Если путь пустой не движемся
         if (coordinates.isEmpty()) {
-            return;
+            return false;
         }
 
         /// если creature может дойти до target за один ход или creature уже возле target
         if (coordinates.size() - 1 <= speed) {
              /// выполняем performAction убирая при этом из очереди координаты target
             performAction(coordinates.pollLast(), map);
+
             ///  перемещаем creature на ближайшую в пути позицию перед target
-            map.moveEntity(from, coordinates.pollLast(), map.getEntity(from));
+            map.moveEntity(from, coordinates.peekLast(), map.getEntity(from));
+
+            ///  выполняем performActionTow которое будет использовать только Herbivore
+            performActionTwo(coordinates.peekLast(), map);
 
         } else {
             ///  перемещаем creature ближе к target на максимальное количество шагов
@@ -38,8 +49,8 @@ public abstract class Creature extends Entity {
             }
             map.moveEntity(from, coordinates.pollFirst(), map.getEntity(from));
         }
+        return true;
     }
-
 
     private Deque<Coordinates> bfsToTarget(Coordinates start, Map map) {
         /// Очередь для хранения текущих узлов и путей до них
@@ -103,4 +114,5 @@ public abstract class Creature extends Entity {
     public void setHealth(int health) {
         this.health = health;
     }
+
 }

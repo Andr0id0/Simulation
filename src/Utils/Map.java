@@ -1,11 +1,20 @@
+package Utils;
+
+import Entitys.Creature;
+import Entitys.Entity;
+import Entitys.Grass;
+import Entitys.Herbivore;
 import java.util.HashMap;
+
 
 public class Map {
 
     public HashMap<Coordinates, Entity> map;
 
-    private int sizeX = 10;
-    private int sizeY = 10;
+    SimulationParameters parameters = new SimulationParameters();
+
+    private final int xSize = parameters.getMapSizeX();
+    private final int ySize = parameters.getMapSizeY();
 
 
     public int getGrassCount() {
@@ -16,6 +25,14 @@ public class Map {
             }
         }
         return grassCount;
+    }
+
+    public boolean isHaveFreePlaceOnMap() {
+        int square = xSize * ySize;
+        for (Coordinates c : map.keySet()) {
+            square--;
+        }
+        return square != 0;
     }
 
     public boolean containsEntity(Coordinates coordinates) {
@@ -52,8 +69,8 @@ public class Map {
     }
 
     public boolean isCordsInMapArea(Coordinates coordinates) {
-        return (coordinates.x() >= 0 && coordinates.x() < sizeX
-                && coordinates.y() >= 0 &&  coordinates.y() < sizeY);
+        return (coordinates.x() >= 0 && coordinates.x() < xSize
+                && coordinates.y() >= 0 &&  coordinates.y() < ySize);
     }
 
     public boolean isGrassOrVoid(Coordinates coordinates) {
@@ -75,10 +92,11 @@ public class Map {
     }
 
     public int getSizeY() {
-        return sizeY;
+        return ySize;
     }
 
     public int getSizeX() {
-        return sizeX;
+        return xSize;
     }
+
 }

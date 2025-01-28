@@ -1,13 +1,22 @@
+package Entitys;
+
+import Utils.Coordinates;
+import Utils.Map;
+
+
 public class Predator extends Creature {
 
     int damage;
 
-    String predatorTarget = "Herbivore";
+    final String predatorTarget = "Herbivore";
 
     @Override
     void performAction(Coordinates coordinates, Map map) {
         attack(coordinates, map);
     }
+
+    @Override
+    void performActionTwo(Coordinates coordinates, Map map) {}
 
     @Override
     boolean isTargetOrVoid(Coordinates coordinates, Map map) {
