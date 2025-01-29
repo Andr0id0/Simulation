@@ -1,13 +1,10 @@
 import Actions.*;
 import Utils.Map;
 
-import java.util.concurrent.TimeUnit;
-
 
 public class Simulation {
 
     Map map;
-    int moveCounter;
     boolean didEntityMove;
 
     InitMapAction initMapAction = new InitMapAction();
@@ -16,10 +13,9 @@ public class Simulation {
     MoveEntityAction moveEntityAction = new MoveEntityAction();
     AddGrassAction addGrassAction = new AddGrassAction();
 
-
+    ///
     Action[] initActions = new Action[]{new InitMapAction(), new InitEntityAction(), new MapConsoleRenderAction()};
-
-    Action[] turnActions = new Action[]{new MoveEntityAction(), new MapConsoleRenderAction()};
+    Action[] turnActions = new Action[]{new MoveEntityAction(),new AddGrassAction(), new MapConsoleRenderAction()};
 
 
     public void initSimulation() {
@@ -36,7 +32,7 @@ public class Simulation {
         mapConsoleRenderAction.render(map);
     }
 
-    public void startSimulation() {
+    public void startCountSimulation(int moveCounter) {
         System.out.println("Начинаем симуляцию");
         while (moveCounter > 0) {
             nextTurn();
@@ -66,11 +62,6 @@ public class Simulation {
                 Thread.currentThread().interrupt();
             }
         }
-
-    }
-
-    public Simulation(int moveCounter) {
-        this.moveCounter = moveCounter;
     }
 
 }

@@ -111,8 +111,4 @@ public abstract class Creature extends Entity {
         return speed;
     }
 
-    public void setHealth(int health) {
-        this.health = health;
-    }
-
 }

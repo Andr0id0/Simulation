@@ -10,19 +10,18 @@ public class SimulationParameters {
     private final int maxGrassLimit = (int) (xSize * ySize * grassRatio);
     private final int minGrassLimit = maxGrassLimit / 2;
 
-    private final int TreeCount = 10;
-    private final int RockCount = 30;
+    private final int TreeCount = 20;
+    private final int RockCount = 85;
     private final int GrassCount = 30;
-    private final int HerbivoreCount = 40;
-    private final int PredatorCount = 20;
+    private final int HerbivoreCount = 42;
+    private final int PredatorCount = 31;
 
     private final int predatorHp = 1;
     private final int predatorSpeed = 2;
     private final int predatorDamage = 1;
-    private final int herbivoreHp = 100;
+    private final int herbivoreHp = 20;
     private final int herbivoreSpeed = 3;
-    private final int herbivoreHealAfterEat = 100;
-
+    private final int herbivoreHealAfterEat = 1;
 
 
     public int getGrassCount() {

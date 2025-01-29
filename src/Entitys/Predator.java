@@ -2,6 +2,7 @@ package Entitys;
 
 import Utils.Coordinates;
 import Utils.Map;
+import Utils.SimulationParameters;
 
 
 public class Predator extends Creature {
@@ -24,17 +25,18 @@ public class Predator extends Creature {
     }
 
     public void attack(Coordinates coordinates, Map map) {
-        Creature creature = (Creature) map.getEntity(coordinates);
-        int healthAfterAttack = creature.getHealth() - damage;
+        SimulationParameters parameters = new SimulationParameters();
+        Herbivore herbivore = (Herbivore) map.getCreature(coordinates);
+        int healthAfterAttack = herbivore.getHealth() - parameters.getPredatorDamage();
         if (healthAfterAttack <= 0) {
             map.deleteEntity(coordinates);
             System.out.println("Убили травоядного на координатах x:" + coordinates.x() + " y:" + coordinates.y());
             return;
         }
-        creature.setHealth(healthAfterAttack);
-        map.putEntity(coordinates, creature);
-        System.out.println("Ранили травоядного на координатах x:" + coordinates.x() + " y:" + coordinates.y());
 
+        System.out.println("Ранили травоядного на координатах x:" + coordinates.x() + " y:" + coordinates.y() + " hp травоядного :" + healthAfterAttack);
+        Herbivore newHerbivore = new Herbivore(herbivore.getSpeed(), healthAfterAttack);
+        map.putEntity(coordinates, newHerbivore);
     }
 
     public Predator(int speed, int health, int damage) {

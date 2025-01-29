@@ -7,12 +7,12 @@ import Utils.SimulationParameters;
 
 public class Herbivore extends Creature {
 
-    int healAfterEat;
     final String herbivoreTarget = "Grass";
 
     @Override
     void performAction(Coordinates coordinates, Map map) {
         eat(coordinates, map);
+
     }
 
     @Override
@@ -27,19 +27,23 @@ public class Herbivore extends Creature {
 
     public void eat(Coordinates coordinates, Map map) {
         map.deleteEntity(coordinates);
-        System.out.println("растение скушали + x:" + coordinates.x() + " y:" + coordinates.y());
+        System.out.println("Скушали растение на координатах x:" + coordinates.x() + " y:" + coordinates.y());
     }
 
     public void heal(Coordinates coordinates, Map map) {
         SimulationParameters parameters = new SimulationParameters();
+        int healAfterEat = parameters.getHerbivoreHealAfterEat();
         Herbivore herbivore = (Herbivore) map.getCreature(coordinates);
         int newHp = herbivore.getHealth();
-        if (herbivore.getHealth() < parameters.getHerbivoreHealAfterEat()) {
+        boolean isHerbivoreHeal = false;
+        if (herbivore.getHealth() < parameters.getHerbivoreHp() - healAfterEat) {
             newHp += healAfterEat;
-            System.out.println("Коза x:" + coordinates.x() + " y:" + coordinates.y() + " восстановила здоровье на: " + healAfterEat + " текущее здоровье: " + newHp);
+            System.out.println("Herbivore x:" + coordinates.x() + " y:" + coordinates.y() + " полечилась на: "  + healAfterEat + " текущее hp " + newHp);
+            isHerbivoreHeal = true;
         }
-        herbivore.setHealth(newHp);
-        map.putEntity(coordinates, herbivore);
+        Herbivore herbivoreAfterHeal = new Herbivore(herbivore.getSpeed(), newHp);
+        map.putEntity(coordinates, herbivoreAfterHeal);
+        if (!isHerbivoreHeal) System.out.println("Herbivore x:" + coordinates.x() + " y:" + coordinates.y() + " hp:" + newHp);
     }
 
     public Herbivore(int speed, int health) {
