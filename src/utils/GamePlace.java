@@ -1,25 +1,30 @@
-package Utils;
+package utils;
 
-import Entitys.Creature;
-import Entitys.Entity;
-import Entitys.Grass;
-import Entitys.Herbivore;
+import entities.Creature;
+import entities.Entity;
+import entities.Grass;
+import entities.Herbivore;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 
-public class Map {
+public class GamePlace {
 
-    public HashMap<Coordinates, Entity> map;
+    private final Map<Coordinates, Entity> entities;
 
-    SimulationParameters parameters = new SimulationParameters();
+    SimulationParameters simulationParameters = new SimulationParameters();
 
-    private final int xSize = parameters.getMapSizeX();
-    private final int ySize = parameters.getMapSizeY();
+    private final int xSize = simulationParameters.getMapSizeX();
+    private final int ySize = simulationParameters.getMapSizeY();
 
+    public GamePlace() {
+        this.entities = new HashMap<>();
+    }
 
     public int getGrassCount() {
         int grassCount = 0;
-        for (Coordinates coordinates : map.keySet()) {
+        for (Coordinates coordinates : entities.keySet()) {
             if (getEntity(coordinates) instanceof Grass) {
                 grassCount++;
             }
@@ -27,33 +32,29 @@ public class Map {
         return grassCount;
     }
 
+    public Set<Coordinates> getAllEntitiesCoordinates() {
+        return entities.keySet();
+    }
+
+
     public boolean isHaveFreePlaceOnMap() {
-        int square = xSize * ySize;
-        for (Coordinates c : map.keySet()) {
-            square--;
-        }
-        return square != 0;
+        return entities.size() < xSize * ySize;
     }
 
     public boolean containsEntity(Coordinates coordinates) {
-        return map.containsKey(coordinates);
+        return entities.containsKey(coordinates);
     }
 
     public void deleteEntity(Coordinates coordinates) {
-        map.remove(coordinates);
+        entities.remove(coordinates);
     }
 
     public void putEntity(Coordinates coordinates, Entity entity) {
-        map.put(coordinates, entity);
-    }
-
-    public void moveEntity(Coordinates from, Coordinates to, Entity entity) {
-        map.remove(from);
-        map.put(to, entity);
+        entities.put(coordinates, entity);
     }
 
     public Entity getEntity(Coordinates coordinates) {
-        return map.get(coordinates);
+        return entities.get(coordinates);
     }
 
     public boolean isCreature(Coordinates coordinates) {
@@ -65,7 +66,7 @@ public class Map {
     }
 
     public boolean isSquareEmpty(Coordinates coordinates) {
-        return !map.containsKey(coordinates);
+        return !entities.containsKey(coordinates);
     }
 
     public boolean isCordsInMapArea(Coordinates coordinates) {
@@ -84,11 +85,7 @@ public class Map {
         if (getEntity(coordinates) == null) {
             return true;
         }
-        return map.get(coordinates) instanceof Herbivore;
-    }
-
-    public Map() {
-        this.map = new HashMap<>();
+        return entities.get(coordinates) instanceof Herbivore;
     }
 
     public int getSizeY() {

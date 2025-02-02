@@ -1,9 +1,9 @@
-package Utils;
+package utils;
 
 public class SimulationParameters {
 
-    private int xSize = 25;
-    private int ySize = 60;
+    private int xSize = 20;
+    private int ySize = 65;
 
     private final double grassRatio = 0.11d;
 
@@ -11,16 +11,16 @@ public class SimulationParameters {
     private final int minGrassLimit = maxGrassLimit / 2;
 
     private final int TreeCount = 20;
-    private final int RockCount = 85;
-    private final int GrassCount = 30;
-    private final int HerbivoreCount = 42;
-    private final int PredatorCount = 31;
+    private final int RockCount = 100;
+    private final int GrassCount = 100;
+    private final int HerbivoreCount = 20;
+    private final int PredatorCount = 20;
 
     private final int predatorHp = 1;
-    private final int predatorSpeed = 2;
+    private final int predatorSpeed = 1;
     private final int predatorDamage = 1;
     private final int herbivoreHp = 20;
-    private final int herbivoreSpeed = 3;
+    private final int herbivoreSpeed = 1;
     private final int herbivoreHealAfterEat = 1;
 
 

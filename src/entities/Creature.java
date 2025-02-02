@@ -1,30 +1,35 @@
-package Entitys;
+package entities;
 
-import Utils.Coordinates;
-import Utils.Map;
+import utils.Coordinates;
+import utils.GamePlace;
 import java.util.*;
 
 
 public abstract class Creature extends Entity {
 
-    int speed;
-    int health;
+    private int speed;
+    private int health;
 
     ///  цель поиска для creature
     public String target;
 
+    public Creature(int health, int speed) {
+        this.health = health;
+        this.speed = speed;
+    }
+
     /// метод, выполняющий в дочернем классе, действие creature
-    abstract void performAction(Coordinates coordinates, Map map);
+    abstract void entityAction(Coordinates coordinates, GamePlace gamePlace);
     ///  метод который будет переопределен только у Herbivore           это нормальная практика так делать????
-    abstract void performActionTwo(Coordinates coordinates, Map map);
+    abstract void performActionTwo(Coordinates coordinates, GamePlace gamePlace);
 
     /// метод, определяющий в дочернем классе, является ли клетка target или void
-    abstract boolean isTargetOrVoid(Coordinates coordinates, Map map);
+    abstract boolean isTargetOrVoid(Coordinates coordinates, GamePlace gamePlace);
 
-    public boolean makeMove(Coordinates from, Map map) {
-        Creature creature = (Creature) map.getEntity(from);
+    public boolean makeMove(Coordinates from, GamePlace gamePlace) {
+        Creature creature = (Creature) gamePlace.getEntity(from);
         int speed = creature.getSpeed();
-        Deque<Coordinates> coordinates = bfsToTarget(from, map);
+        Deque<Coordinates> coordinates = bfsToTarget(from, gamePlace);
 
         /// Если путь пустой не движемся
         if (coordinates.isEmpty()) {
@@ -34,25 +39,27 @@ public abstract class Creature extends Entity {
         /// если creature может дойти до target за один ход или creature уже возле target
         if (coordinates.size() - 1 <= speed) {
              /// выполняем performAction убирая при этом из очереди координаты target
-            performAction(coordinates.pollLast(), map);
+            entityAction(coordinates.pollLast(), gamePlace);
 
             ///  перемещаем creature на ближайшую в пути позицию перед target
-            map.moveEntity(from, coordinates.peekLast(), map.getEntity(from));
+//            gamePlace.moveEntity(from, coordinates.peekLast(), gamePlace.getEntity(from));
+            moveCreature(from, coordinates.peekLast(), gamePlace.getCreature(from), gamePlace);
 
             ///  выполняем performActionTow которое будет использовать только Herbivore
-            performActionTwo(coordinates.peekLast(), map);
+            performActionTwo(coordinates.peekLast(), gamePlace);
 
         } else {
             ///  перемещаем creature ближе к target на максимальное количество шагов
             for (int step = 0; step < speed; step++) {
                 coordinates.pollFirst();
             }
-            map.moveEntity(from, coordinates.pollFirst(), map.getEntity(from));
+            moveCreature(from, coordinates.pollFirst(), gamePlace.getCreature(from), gamePlace);
+//            gamePlace.moveEntity(from, coordinates.pollFirst(), gamePlace.getEntity(from));
         }
         return true;
     }
 
-    private Deque<Coordinates> bfsToTarget(Coordinates start, Map map) {
+    private Deque<Coordinates> bfsToTarget(Coordinates start, GamePlace gamePlace) {
         /// Очередь для хранения текущих узлов и путей до них
         Queue<Deque<Coordinates>> queue = new LinkedList<>();
         Deque<Coordinates> startPath = new LinkedList<>();
@@ -68,7 +75,7 @@ public abstract class Creature extends Entity {
             Coordinates current = path.getLast();
 
             /// Если текущая сущность это target то возвращаем путь
-            Entity entity = map.getEntity(current);
+            Entity entity = gamePlace.getEntity(current);
             if (entity != null && entity.getClass().getSimpleName().equals(target)) {
                 return path;
             }
@@ -77,7 +84,7 @@ public abstract class Creature extends Entity {
             for (Coordinates neighbor : cellsToCheck(current)) {
 
                 /// Проверяем что сосед в пределах карты, не был посещен, и является target или пустой клеткой
-                if (map.isCordsInMapArea(neighbor) && !visited.contains(neighbor) && isTargetOrVoid(neighbor, map)) {
+                if (gamePlace.isCordsInMapArea(neighbor) && !visited.contains(neighbor) && isTargetOrVoid(neighbor, gamePlace)) {
                     visited.add(neighbor);
 
                     /// Создаем новый путь с добавлением соседа
@@ -101,6 +108,11 @@ public abstract class Creature extends Entity {
                 new Coordinates(coordinates.x(), coordinates.y() - 1),
                 new Coordinates(coordinates.x(), coordinates.y() + 1)
         );
+    }
+
+    private void moveCreature(Coordinates from, Coordinates to, Creature creature, GamePlace gamePlace) {
+        gamePlace.deleteEntity(from);
+        gamePlace.putEntity(to, creature);
     }
 
     public int getHealth() {

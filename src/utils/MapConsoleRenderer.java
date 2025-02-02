@@ -1,6 +1,6 @@
-package Utils;
+package utils;
 
-import Entitys.Entity;
+import entities.Entity;
 
 
 public class MapConsoleRenderer {
@@ -14,22 +14,22 @@ public class MapConsoleRenderer {
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String SYMBOL_EMPTY = "🟩";
 
-    private final Map map;
+    private final GamePlace gamePlace;
 
-    public MapConsoleRenderer(Map map) {
-        this.map = map;
+    public MapConsoleRenderer(GamePlace gamePlace) {
+        this.gamePlace = gamePlace;
     }
 
     public void render() {
-        int height = map.getSizeX();
-        int length = map.getSizeY();
+        int height = gamePlace.getSizeX();
+        int length = gamePlace.getSizeY();
 
         for (int x = 0; x < height; x++) {
             StringBuilder line = new StringBuilder();
             line.append(ANSI_BACKGROUND);
             for (int y = 0; y < length; y++) {
                 Coordinates coordinates = new Coordinates(x, y);
-                if (map.isSquareEmpty(coordinates)) {
+                if (gamePlace.isSquareEmpty(coordinates)) {
                     line.append(SYMBOL_EMPTY).append(" ");
                 } else {
                     line.append(renderEntity(coordinates)).append(" ");
@@ -42,14 +42,20 @@ public class MapConsoleRenderer {
     }
 
     private String renderEntity(Coordinates coordinates) {
-        Entity entity = map.getEntity(coordinates);
+        Entity entity = gamePlace.getEntity(coordinates);
         return switch (entity.getClass().getSimpleName()) {
             case "Tree" -> SYMBOL_TREE;
             case "Rock" -> SYMBOL_ROCK;
             case "Grass" -> SYMBOL_GRASS;
             case "Predator" -> SYMBOL_PREDATOR;
             case "Herbivore" -> SYMBOL_HERBIVORE;
-            default -> SYMBOL_EMPTY;
+            default -> {
+                try {
+                    throw new NoSuchFieldException();
+                } catch (NoSuchFieldException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         };
     }
 
